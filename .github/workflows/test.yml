@@ -1,0 +1,22 @@
+on: 
+  workflow_dispatch:
+  push:
+  
+jobs:
+  test_cli_action:
+    strategy:
+      matrix:
+        os: [ubuntu-latest,windows-latest,macos-latest]
+      fail-fast: false
+    runs-on: ${{ matrix.os }}
+    name: test pact cli action
+    steps:
+      - uses: actions/checkout@v3
+      - id: pact-cli
+        uses: you54f/paction@v1
+      - run: pact-broker.bat
+        if: runner.os == 'windows'
+        shell: cmd
+      - run: pact-broker
+        if: runner.os != 'windows'
+        shell: bash
