@@ -1,0 +1,18 @@
+name: Build
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  test:
+    timeout-minutes: 10
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+      fail-fast: false
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: ./cli.sh
