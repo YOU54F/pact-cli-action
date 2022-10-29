@@ -102,13 +102,13 @@ jobs:
       - run: echo "PATH=${PATH}:${PWD}/pact/bin/" >> $GITHUB_ENV
         if: runner.os != 'windows'
         shell: bash
-      - run: pact-broker.bat
-        if: runner.os == 'windows'
-        shell: cmd
+      - run: pact-broker
+        if: runner.os != 'windows'
+        shell: bash
       - run: |
           "$pwd\pact\bin\" >> $env:GITHUB_PATH
         if: runner.os == 'windows'
         shell: powershell
-      - run: pact-broker
-        if: runner.os != 'windows'
-        shell: bash
+      - run: pact-broker.bat
+        if: runner.os == 'windows'
+        shell: cmd
