@@ -23,12 +23,8 @@ jobs:
         shell: sh
       - run: curl -fsSL https://raw.githubusercontent.com/pact-foundation/pact-ruby-standalone/master/install.sh | bash && pact/bin/pact help
       - run: rm -rf pact
-      - run: wget -q https://raw.githubusercontent.com/pact-foundation/pact-ruby-standalone/master/install.sh -O- | bash && pact/bin/pact help
-      - run: rm -rf pact
-      - run: curl -fsSL https://raw.githubusercontent.com/pact-foundation/pact-ruby-standalone/master/install.sh | sh && pact/bin/pact help
-      - run: rm -rf pact
       - run: wget -q https://raw.githubusercontent.com/pact-foundation/pact-ruby-standalone/master/install.sh -O- | sh && pact/bin/pact help
-      - run: rm -rf pact
+      - run: echo "PATH=${PATH}:${PWD}/pact/bin/" >> $GITHUB_ENV
 
   mac:
     timeout-minutes: 10
@@ -46,8 +42,9 @@ jobs:
           brew install pact-ruby-standalone
           pact help
         shell: bash
+      - run: brew uninstall pact-ruby-standalone
       - run: curl -fsSL https://raw.githubusercontent.com/pact-foundation/pact-ruby-standalone/master/install.sh | bash && pact/bin/pact help
-      - run: rm -rf pact
+      - run: echo "PATH=${PATH}:${PWD}/pact/bin/" >> $GITHUB_ENV
 
   windows:
     timeout-minutes: 10
@@ -99,16 +96,9 @@ jobs:
           esac
           pact/bin/pact-broker${ext} help
         shell: bash
-      - run: echo "PATH=${PATH}:${PWD}/pact/bin/" >> $GITHUB_ENV
-        if: runner.os != 'windows'
-        shell: bash
-      - run: pact-broker
-        if: runner.os != 'windows'
-        shell: bash
       - run: |
           "$pwd\pact\bin\" >> $env:GITHUB_PATH
         if: runner.os == 'windows'
         shell: powershell
       - run: pact-broker.bat
-        if: runner.os == 'windows'
         shell: cmd
