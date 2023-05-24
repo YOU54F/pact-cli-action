@@ -1,4 +1,4 @@
-name: Test you54f/paction@master
+name: Test you54f/paction@main
 
 on: 
   workflow_dispatch:
