@@ -1,0 +1,77 @@
+name: Test cli installation methods
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  install_script_pre_fix:
+    timeout-minutes: 10
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest]
+        shell: [bash, sh]
+      fail-fast: false
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v3
+      - run: echo "PATH=${PATH}:${PWD}/pact/bin/" >> $GITHUB_ENV
+      - run: curl -fsSL https://raw.githubusercontent.com/pact-foundation/pact-ruby-standalone/master/install.sh | ${{ matrix.shell }}
+        name: install via pact-ruby-standalone install script via ${{ matrix.shell }}
+      - run: pact help
+
+  install_script_post_fix:
+    timeout-minutes: 10
+    strategy:
+      matrix:
+        os: [macos-latest,ubuntu-latest]
+        shell: [bash, sh]
+      fail-fast: false
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v3
+      - run: echo "PATH=${PATH}:${PWD}/pact/bin/" >> $GITHUB_ENV
+      - run: curl -fsSL https://raw.githubusercontent.com/pact-foundation/pact-ruby-standalone/chore/install/bin_sh/install.sh | ${{ matrix.shell }}
+        name: install via pact-ruby-standalone install script via ${{ matrix.shell }}
+      - run: pact help
+
+  homebrew:
+    strategy:
+      matrix:
+        os: [macos-latest,ubuntu-latest]
+      fail-fast: false
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: install homebrew
+        run: |
+          /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+          echo "/home/linuxbrew/.linuxbrew/bin" >> $GITHUB_PATH
+        if: ${{ runner.os == 'Linux' }}
+      - name: install via homebrew
+        run: brew install pact-foundation/pact-ruby-standalone/pact-ruby-standalone
+      - run: pact help
+
+  windows_scoop:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        shell: [cmd, powershell, pwsh, bash, sh]
+      fail-fast: false
+    defaults:
+      run:
+        shell: ${{ matrix.shell }}
+    steps:
+      - uses: actions/checkout@v3
+      - run: |
+          iex "& {$(irm get.scoop.sh)} -RunAsAdmin"
+          "$HOME\scoop\shims\" >> $env:GITHUB_PATH
+        name: install scoop
+        shell: powershell
+      - run: scoop bucket add pact https://github.com/you54f/scoop
+      - run: scoop install pact-ruby-standalone
+      - run: pact help
+        name: pact help via ${{ matrix.shell }}

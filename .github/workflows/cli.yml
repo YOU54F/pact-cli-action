@@ -1,67 +1,46 @@
-name: Build
+name: Test cli.sh
 
 on:
   push:
   workflow_dispatch:
 
 jobs:
-  ubuntu:
+  local_install_script:
     timeout-minutes: 10
     strategy:
       matrix:
-        os: [ubuntu-latest]
+        os: [macos-latest,ubuntu-latest]
+        shell: [bash, sh]
       fail-fast: false
+    defaults:
+      run:
+        shell: ${{ matrix.shell }}
     runs-on: ${{ matrix.os }}
 
     steps:
       - uses: actions/checkout@v3
       - run: ./cli.sh
-        name: bash
-        shell: bash
-      - run: ./cli.sh
-        name: sh
-        shell: sh
-      - run: curl -fsSL https://raw.githubusercontent.com/pact-foundation/pact-ruby-standalone/chore/install/bin_sh/install.sh | sh && pact/bin/pact help
-      - run: rm -rf pact
-      - run: wget -q https://raw.githubusercontent.com/pact-foundation/pact-ruby-standalone/chore/install/bin_sh/install.sh -O- | sh && pact/bin/pact help
-      - run: echo "PATH=${PATH}:${PWD}/pact/bin/" >> $GITHUB_ENV
+        name: install via cli.sh
       - run: pact help
+        name: pact help via ${{ matrix.shell }}
 
-  mac:
-    timeout-minutes: 10
+  windows_local_install_script:
+    runs-on: windows-latest
     strategy:
       matrix:
-        os: [macos-latest]
+        shell: [cmd, powershell, pwsh, bash, sh]
       fail-fast: false
-    runs-on: ${{ matrix.os }}
-
+    defaults:
+      run:
+        shell: ${{ matrix.shell }}
     steps:
       - uses: actions/checkout@v3
-      - run: ./cli.sh
-      - run: |
-          brew install pact-foundation/pact-ruby-standalone/pact-ruby-standalone
-          pact help
-        shell: bash
-      - run: brew uninstall pact-ruby-standalone
-      - run: curl -fsSL https://raw.githubusercontent.com/pact-foundation/pact-ruby-standalone/chore/install/bin_sh/install.sh | sh && pact/bin/pact help
-      - run: echo "PATH=${PATH}:${PWD}/pact/bin/" >> $GITHUB_ENV
-      - run: pact help
-
-  windows:
-    timeout-minutes: 10
-    strategy:
-      matrix:
-        os: [windows-latest]
-      fail-fast: false
-    runs-on: ${{ matrix.os }}
-
-    steps:
-      - uses: actions/checkout@v3
-      - run: ./cli.sh
-        shell: bash
       - run: |
           "$pwd\pact\bin\" >> $env:GITHUB_PATH
-        if: runner.os == 'windows'
         shell: powershell
-      - run: pact-broker.bat
-        shell: cmd
+        if: matrix.shell == 'powershell' || matrix.shell == 'pwsh' || matrix.shell == 'cmd'
+      - run: ./cli.sh
+        name: install via cli.sh
+        shell: sh
+      - run: pact.bat help
+        name: pact.bat help via ${{ matrix.shell }}
