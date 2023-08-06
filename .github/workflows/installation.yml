@@ -57,5 +57,5 @@ jobs:
         shell: powershell
       - run: scoop bucket add pact https://github.com/you54f/scoop
       - run: scoop install pact-ocran
-      - run: pact help
-        name: pact help via ${{ matrix.shell }}
+      - run: pact-cli help
+        name: pact-cli help via ${{ matrix.shell }}
