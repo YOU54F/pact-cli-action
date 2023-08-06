@@ -6,7 +6,11 @@ runs:
     - run: brew install you54f/pact/pact_broker
       if: runner.os == 'linux' || runner.os == 'macos'
       shell: bash
-    - uses: MinoruSekine/setup-scoop@v1
+    - run: |
+        iex "& {$(irm get.scoop.sh)} -RunAsAdmin"
+        "$HOME\scoop\shims\" >> $env:GITHUB_PATH
+      name: install scoop
+      shell: powershell
       if: runner.os == 'windows'
     - run: |
         scoop bucket add pact https://github.com/you54f/scoop
