@@ -14,7 +14,6 @@ runs:
       if: runner.os == 'windows'
     - run: |
         scoop bucket add pact https://github.com/you54f/scoop
-        scoop install pact-broker
         scoop install pact-ocran
       if: runner.os == 'windows'
       shell: powershell
