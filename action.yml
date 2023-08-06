@@ -15,7 +15,7 @@ runs:
     - run: |
         scoop bucket add pact https://github.com/you54f/scoop
         scoop install pact-broker
-        scoop install pact
+        scoop install pact-ocran
       if: runner.os == 'windows'
       shell: powershell
     - run: ${{ github.action_path }}\cli.sh
