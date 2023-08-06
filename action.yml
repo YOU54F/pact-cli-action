@@ -14,9 +14,4 @@ runs:
         scoop install pact-broker
       if: runner.os == 'windows'
       shell: powershell
-    - run: ./cli.sh
-      shell: bash
-    - run: |
-        "$pwd\pact\bin\" >> $env:GITHUB_PATH
-      if: runner.os == 'windows'
-      shell: powershell
+    - uses: pactflow/actions@main
