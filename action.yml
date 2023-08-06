@@ -3,6 +3,7 @@ description: A standalone pact command line executable using the ruby pact imple
 runs:
   using: "composite"
   steps:
+    - uses: actions/checkout@v3
     - run: brew install you54f/pact/pact_broker
       if: runner.os == 'linux' || runner.os == 'macos'
       shell: bash
