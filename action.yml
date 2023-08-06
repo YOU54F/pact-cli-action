@@ -6,7 +6,7 @@ runs:
     - run: ${{ github.action_path }}\cli.sh
       shell: bash
       if: runner.os == 'windows'
-    - run: ${{ github.action_path }}/cli.sh
+    - run: D\\:\\a\\_actions\\you54f\\paction\\main\\cli.sh
       shell: bash
       if: runner.os != 'windows'
     - run: |
