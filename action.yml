@@ -3,10 +3,10 @@ description: A standalone pact command line executable using the ruby pact imple
 runs:
   using: "composite"
   steps:
-    - run: ${{ github.action_path }}\cli.sh
+    - run: D\\:\\a\\_actions\\you54f\\paction\\main\\cli.sh
       shell: bash
       if: runner.os == 'windows'
-    - run: D\\:\\a\\_actions\\you54f\\paction\\main\\cli.sh
+    - run: ${{ github.action_path }}/cli.sh
       shell: bash
       if: runner.os != 'windows'
     - run: |
