@@ -3,6 +3,16 @@ description: A standalone pact command line executable using the ruby pact imple
 runs:
   using: "composite"
   steps:
+    - run: brew install you54f/pact/pact_broker
+      if: runner.os == 'linux' || runner.os == 'macos'
+      shell: bash
+    - uses: MinoruSekine/setup-scoop@v1
+      if: runner.os == 'windows'
+    - run: |
+        scoop bucket add pact https://github.com/you54f/scoop
+        scoop install pact-broker
+      if: runner.os == 'windows'
+      shell: powershell
     - run: ./cli.sh
       shell: bash
     - run: |
