@@ -17,10 +17,3 @@ runs:
         scoop install pact-ocran
       if: runner.os == 'windows'
       shell: powershell
-    - run: ${{ github.action_path }}/cli.sh
-      shell: bash
-      if: runner.os == 'linux' || runner.os == 'macos'
-    # - run: |
-    #     "$pwd\pact\bin\" >> $env:GITHUB_PATH
-    #   if: runner.os == 'windows'
-    #   shell: powershell
