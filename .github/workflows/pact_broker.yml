@@ -1,0 +1,72 @@
+name: pact_broker
+
+on:
+  workflow_dispatch:
+  push:
+
+jobs:
+  test_win:
+    strategy:
+      matrix:
+        os: [
+          # macos-latest, 
+          # ubuntu-latest, 
+          windows-latest
+          ]
+      fail-fast: false
+    defaults:
+      run:
+        shell: bash
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Set up Homebrew
+        uses: Homebrew/actions/setup-homebrew@master
+        if: runner.os == 'linux' || runner.os == 'macos'
+      - uses: you54f/paction@feat/pact_broker
+      - run: |
+          scoop install wget
+          scoop install netcat
+        shell: powershell
+      - run: pact-broker-cli
+      - run: curl -LO https://raw.githubusercontent.com/pact-foundation/pact-5-minute-getting-started-guide/main/pacts/GettingStartedOrderWeb-GettingStartedOrderApi.json
+      # - run: pact-broker-cli publish -a 1.0.0 GettingStartedOrderWeb-GettingStartedOrderApi.json --broker-base-url https://test.pactflow.io --broker-username dXfltyFMgNOFZAxr8io9wJ37iUpY42M --broker-password O5AIZWxelWbLvqMd8PkAVycBJh2Psyg1
+      - run: pact-broker-app
+      - run: |
+          nohup pact-broker-app >& nohup.out &
+          echo $! > $HOME/pid.nohup
+      - name: Wait for the pact broker to start
+        run: wget -qO- https://raw.githubusercontent.com/eficode/wait-for/$WAIT_FOR_VERSION/wait-for | sh -s -- localhost:9292 -- echo "pact broker is up"
+        env:
+          WAIT_FOR_VERSION: 4df3f9262d84cab0039c07bf861045fbb3c20ab7 # v2.2.3
+      - run: pact-broker-cli publish --broker-base-url http://localhost:9292 -a 1.0.0 GettingStartedOrderWeb-GettingStartedOrderApi.json
+      - run: kill `cat $HOME/pid.nohup`
+
+  test_non_win:
+    strategy:
+      matrix:
+        os: [
+          macos-latest, 
+          ubuntu-latest, 
+          # windows-latest
+          ]
+      fail-fast: false
+    defaults:
+      run:
+        shell: bash
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Set up Homebrew
+        uses: Homebrew/actions/setup-homebrew@master
+        if: runner.os == 'linux' || runner.os == 'macos'
+      - uses: you54f/paction@feat/pact_broker
+      - run: pact-broker
+      - run: curl -LO https://raw.githubusercontent.com/pact-foundation/pact-5-minute-getting-started-guide/main/pacts/GettingStartedOrderWeb-GettingStartedOrderApi.json
+      - run: |
+          nohup pact-broker-app >& nohup.out &
+          echo $! > $HOME/pid.nohup
+      - name: Wait for the pact broker to start
+        run: wget -qO- https://raw.githubusercontent.com/eficode/wait-for/$WAIT_FOR_VERSION/wait-for | sh -s -- localhost:9292 -- echo "pact broker is up"
+        env:
+          WAIT_FOR_VERSION: 4df3f9262d84cab0039c07bf861045fbb3c20ab7 # v2.2.3
+      - run: pact-broker publish --broker-base-url http://localhost:9292 -a 1.0.0 GettingStartedOrderWeb-GettingStartedOrderApi.json
+      - run: kill `cat $HOME/pid.nohup`
