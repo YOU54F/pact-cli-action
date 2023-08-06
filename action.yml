@@ -3,7 +3,7 @@ description: A standalone pact command line executable using the ruby pact imple
 runs:
   using: "composite"
   steps:
-    - run: ./cli.sh
+    - run: ${{ github.action_path }}/cli.sh
       shell: bash
     - run: |
         "$pwd\pact\bin\" >> $env:GITHUB_PATH
