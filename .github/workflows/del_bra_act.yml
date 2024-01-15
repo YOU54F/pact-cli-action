@@ -1,0 +1,19 @@
+name: Test delete branch action
+
+on:
+  push:
+  workflow_dispatch:
+
+env:
+  application_name: "katacoda-consumer-v3" # The pacticipant name of which the branch belongs to
+  PACT_BROKER_BASE_URL: ${{ secrets.PACT_BROKER_BASE_URL }} # The base URL of the Pact Broker
+  PACT_BROKER_TOKEN: ${{ secrets.PACT_BROKER_TOKEN }} # Pactflow Broker API Read/Write token
+
+jobs:
+  pact-can-i-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: pactflow/actions/can-i-deploy@v1.0.1
+        env:
+          branch: "renovate/axios-1.x" # The branch name
+          error_when_not_found: false
