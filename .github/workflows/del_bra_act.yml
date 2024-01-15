@@ -16,4 +16,4 @@ jobs:
       - uses: pactflow/actions/delete-branch@feat/delete-branch
         env:
           branch: "renovate/axios-1.x" # The branch name
-          error_when_not_found: false
+          error_when_not_found: true
